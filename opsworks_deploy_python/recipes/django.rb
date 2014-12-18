@@ -30,7 +30,7 @@ node[:deploy].each do |application, deploy|
   if requirements
     Chef::Log.info("Installing using requirements file: #{requirements}")
     pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
-    execute "#{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
+    execute "sudo #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
       group deploy[:group]
