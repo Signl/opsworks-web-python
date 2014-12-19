@@ -25,6 +25,10 @@ node[:deploy].each do |application, deploy|
   node.override[:deploy][application][:migrate] = migrate
   deploy = node[:deploy][application]
 
+  # install mysql requirements
+  system "sudo apt-get -y install python-mysqldb"
+  system "sudo apt-get -y install build-essential python-dev libmysqlclient-dev"
+
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
   if requirements
