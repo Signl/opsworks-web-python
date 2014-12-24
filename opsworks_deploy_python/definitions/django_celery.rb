@@ -54,7 +54,7 @@ define :django_djcelery do
       environment deploy["environment"]
       directory ::File.join(deploy[:deploy_to], "current")
       autostart true
-      user deploy[:user]
+      #user deploy[:user]
       subscribes :restart, "template[#{::File.join(deploy[:deploy_to], "shared", "celeryconfig.py")}]", :delayed
       subscribes :restart, "template[#{::File.join(deploy[:deploy_to], 'current', Helpers.django_setting(deploy, 'settings_file', node))}]", :delayed
     end
@@ -85,7 +85,7 @@ define :django_celery do
       environment deploy["environment"]
       directory ::File.join(deploy[:deploy_to], "current")
       autostart true
-      user deploy[:user]
+      #user deploy[:user]
       subscribes :restart, "template[#{::File.join(deploy[:deploy_to], "shared", "celeryconfig.py")}]", :delayed
       subscribes :restart, "template[#{::File.join(deploy[:deploy_to], 'current', Helpers.django_setting(deploy, 'settings_file', node))}]", :delayed
     end

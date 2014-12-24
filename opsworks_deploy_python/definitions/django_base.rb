@@ -88,7 +88,7 @@ define :django_configure do
         command gunicorn_command
         directory ::File.join(deploy[:deploy_to], "current")
         autostart true
-        user deploy[:user]
+        #user deploy[:user]
       end
       
       supervisor_service application do
