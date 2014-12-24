@@ -47,8 +47,6 @@ define :django_djcelery do
   cmds["celerybeat"] = "celerybeat" if celery["celerybeat"]
   cmds["celerycam"] = "celerycam" if celery["celerycam"]
 
-  deploy["environment"]["C_FORCE_ROOT"] = "yes"
-
   cmds.each do |type, cmd|
     supervisor_service "#{application}-#{type}" do
       action :enable
