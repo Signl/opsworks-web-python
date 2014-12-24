@@ -47,11 +47,13 @@ define :django_djcelery do
   cmds["celerybeat"] = "celerybeat" if celery["celerybeat"]
   cmds["celerycam"] = "celerycam" if celery["celerycam"]
 
+  deploy["environment"]["C_FORCE_ROOT"] = "yes"
+
   cmds.each do |type, cmd|
     supervisor_service "#{application}-#{type}" do
       action :enable
       command "sudo -E #{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'python')} manage.py #{cmd}"
-      environment "#{deploy["environment"]},C_FORCE_ROOT=\"yes\""
+      environment deploy["environment"]
       directory ::File.join(deploy[:deploy_to], "current")
       autostart true
       user deploy[:user]
