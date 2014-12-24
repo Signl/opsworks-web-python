@@ -28,6 +28,7 @@ node[:deploy].each do |application, deploy|
   # install mysql requirements
   system "sudo apt-get -y install python-mysqldb"
   system "sudo apt-get -y install build-essential python-dev libmysqlclient-dev"
+  system "sudo apt-get -y install default-jdk"
 
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
@@ -52,8 +53,8 @@ node[:deploy].each do |application, deploy|
   
   # Migration
   if deploy["migrate"] && deploy["migration_command"]
-      migration_command = "#{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
-    execute migration_command do
+      migration_command = "sudo #{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
+    system migration_command do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
       group deploy[:group]
@@ -63,7 +64,7 @@ node[:deploy].each do |application, deploy|
   # collect static resources
   if deploy["django_collect_static"]
     cmd = deploy["django_collect_static"].is_a?(String) ? deploy["django_collect_static"] : "collectstatic --noinput"
-    execute "#{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
+    system "sudo #{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
       group deploy[:group]
