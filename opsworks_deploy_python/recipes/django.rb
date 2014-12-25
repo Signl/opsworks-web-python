@@ -45,6 +45,8 @@ node[:deploy].each do |application, deploy|
   else
     Chef::Log.debug("No requirements file found")
   end
+  
+  return
 
   django_configure do
     deploy_data deploy
