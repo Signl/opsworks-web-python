@@ -33,20 +33,18 @@ node[:deploy].each do |application, deploy|
 
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
-  system "sudo /srv/www/django/shared/env/bin/pip install -r #{::File.join(deploy[:deploy_to], 'current', requirements)}"
-  
-  #if requirements
-  #  Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
-  #  pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
-  #  system "sudo #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
-  #    cwd ::File.join(deploy[:deploy_to], 'current')
-  #    user deploy[:user]
-  #    group deploy[:group]
-  #    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-  #  end
-  #else
-  #  Chef::Log.debug("No requirements file found")
-  #end
+  if requirements
+    Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
+    pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
+    system "sudo -E #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
+      cwd ::File.join(deploy[:deploy_to], 'current')
+      user deploy[:user]
+      group deploy[:group]
+      environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+    end
+  else
+    Chef::Log.debug("No requirements file found")
+  end
 
   django_configure do
     deploy_data deploy
@@ -56,7 +54,7 @@ node[:deploy].each do |application, deploy|
   
   # Migration
   if deploy["migrate"] && deploy["migration_command"]
-      migration_command = "sudo #{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
+      migration_command = "sudo -E #{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
     system migration_command do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
@@ -67,7 +65,7 @@ node[:deploy].each do |application, deploy|
   # collect static resources
   if deploy["django_collect_static"]
     cmd = deploy["django_collect_static"].is_a?(String) ? deploy["django_collect_static"] : "collectstatic --noinput"
-    system "sudo #{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
+    system "sudo -E #{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
       group deploy[:group]
