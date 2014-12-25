@@ -33,20 +33,20 @@ node[:deploy].each do |application, deploy|
 
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
-  if requirements
-    Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
-    pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
-    system "sudo #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
-      cwd ::File.join(deploy[:deploy_to], 'current')
-      user deploy[:user]
-      group deploy[:group]
-      environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-    end
-  else
-    Chef::Log.debug("No requirements file found")
-  end
+  system "sudo /srv/www/django/shared/env/bin/pip install -r #{::File.join(deploy[:deploy_to], 'current', requirements)}"
   
-  return
+  #if requirements
+  #  Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
+  #  pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
+  #  system "sudo #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
+  #    cwd ::File.join(deploy[:deploy_to], 'current')
+  #    user deploy[:user]
+  #    group deploy[:group]
+  #    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  #  end
+  #else
+  #  Chef::Log.debug("No requirements file found")
+  #end
 
   django_configure do
     deploy_data deploy
