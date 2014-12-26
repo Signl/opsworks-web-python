@@ -35,7 +35,7 @@ node[:deploy].each do |application, deploy|
   requirements = Helpers.django_setting(deploy, 'requirements', node)
   if requirements
     Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
-    pip_cmd = '/usr/local/bin/pip'
+    pip_cmd = 'pip'
     system "sudo -E #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
@@ -54,7 +54,7 @@ node[:deploy].each do |application, deploy|
   
   # Migration
   if deploy["migrate"] && deploy["migration_command"]
-    migration_command = "sudo -E /usr/bin/python #{::File.join(deploy[:deploy_to], 'current', 'manage.py')} migrate"
+    migration_command = "sudo -E python #{deploy["migration_command"]}"
     system migration_command do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
@@ -65,7 +65,7 @@ node[:deploy].each do |application, deploy|
   # collect static resources
   if deploy["django_collect_static"]
     cmd = deploy["django_collect_static"].is_a?(String) ? deploy["django_collect_static"] : "collectstatic --noinput"
-    system "sudo -E /usr/bin/python #{::File.join(deploy[:deploy_to], 'current', 'manage.py')} #{cmd}" do
+    system "sudo -E python manage.py #{cmd}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user deploy[:user]
       group deploy[:group]

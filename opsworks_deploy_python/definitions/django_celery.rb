@@ -50,7 +50,7 @@ define :django_djcelery do
   cmds.each do |type, cmd|
     supervisor_service "#{application}-#{type}" do
       action :enable
-      command "sudo -E /usr/bin/python #{::File.join(deploy[:deploy_to], 'current', 'manage.py')} #{cmd}"
+      command "sudo -E python manage.py #{cmd}"
       environment deploy["environment"]
       directory ::File.join(deploy[:deploy_to], "current")
       autostart true
