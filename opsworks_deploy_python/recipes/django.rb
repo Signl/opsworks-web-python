@@ -31,6 +31,10 @@ node[:deploy].each do |application, deploy|
   system "sudo apt-get -y install default-jdk"
   system "sudo apt-get -y install redis-server"
 
+  purge_before_symlink
+  create_dirs_before_symlink
+  symlink
+
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
   if requirements
