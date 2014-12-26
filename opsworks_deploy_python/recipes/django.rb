@@ -38,7 +38,7 @@ node[:deploy].each do |application, deploy|
     pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
     system "sudo -E #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user 'root'
+      user deploy[:user]
       group deploy[:group]
       environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
     end
@@ -57,7 +57,7 @@ node[:deploy].each do |application, deploy|
       migration_command = "sudo -E #{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
     system migration_command do
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user 'root'
+      user deploy[:user]
       group deploy[:group]
     end
   end
@@ -67,7 +67,7 @@ node[:deploy].each do |application, deploy|
     cmd = deploy["django_collect_static"].is_a?(String) ? deploy["django_collect_static"] : "collectstatic --noinput"
     system "sudo -E #{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user 'root'
+      user deploy[:user]
       group deploy[:group]
     end
   end
