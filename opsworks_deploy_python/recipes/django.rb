@@ -37,9 +37,8 @@ node[:deploy].each do |application, deploy|
     Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
     pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
     system "sudo -E #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
-      virtualenv ::File.join(deploy[:deploy_to], 'shared', 'env')
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user deploy[:user]
+      user 'root'
       group deploy[:group]
       environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
     end
@@ -57,9 +56,8 @@ node[:deploy].each do |application, deploy|
   if deploy["migrate"] && deploy["migration_command"]
       migration_command = "sudo -E #{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
     system migration_command do
-      virtualenv ::File.join(deploy[:deploy_to], 'shared', 'env')
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user deploy[:user]
+      user 'root'
       group deploy[:group]
     end
   end
@@ -68,9 +66,8 @@ node[:deploy].each do |application, deploy|
   if deploy["django_collect_static"]
     cmd = deploy["django_collect_static"].is_a?(String) ? deploy["django_collect_static"] : "collectstatic --noinput"
     system "sudo -E #{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
-      virtualenv ::File.join(deploy[:deploy_to], 'shared', 'env')
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user deploy[:user]
+      user 'root'
       group deploy[:group]
     end
   end
