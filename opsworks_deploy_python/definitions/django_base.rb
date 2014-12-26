@@ -62,7 +62,7 @@ define :django_configure do
     
     if gunicorn["enabled"]
       include_recipe 'supervisor'
-      base_command = "sudo -E python manage.py run_gunicorn"
+      base_command = "sudo -E #{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'python')} manage.py run_gunicorn"
       
       gunicorn_cfg = ::File.join(deploy[:deploy_to], 'shared', 'gunicorn_config.py')
       gunicorn_command = "#{base_command} -c #{gunicorn_cfg}"
