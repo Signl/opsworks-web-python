@@ -30,6 +30,7 @@ node[:deploy].each do |application, deploy|
   system "sudo apt-get -y install build-essential python-dev libmysqlclient-dev"
   system "sudo apt-get -y install default-jdk"
   system "sudo apt-get -y install redis-server"
+  system "sudo apt-get -y install gunicorn"
 
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
