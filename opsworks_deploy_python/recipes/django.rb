@@ -31,6 +31,7 @@ node[:deploy].each do |application, deploy|
   system "sudo apt-get -y install default-jdk"
   system "sudo apt-get -y install redis-server"
   system "sudo apt-get -y install gunicorn"
+  system "sudo apt-get -y install libevent-dev"
 
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
