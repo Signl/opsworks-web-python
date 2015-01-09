@@ -62,10 +62,13 @@ define :django_configure do
     
     if gunicorn["enabled"]
       include_recipe 'supervisor'
-      base_command = "#{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'python')} manage.py run_gunicorn"
+      base_command = "sudo -E #{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'python')} manage.py run_gunicorn"
+      #base_command = "sudo -E gunicorn readygraph.wsgi:application"
       
       gunicorn_cfg = ::File.join(deploy[:deploy_to], 'shared', 'gunicorn_config.py')
-      gunicorn_command = "#{base_command} -c #{gunicorn_cfg}"
+      #gunicorn_cert = ::File.join(deploy[:deploy_to], 'current', 'readygraph_combined.crt')
+      #gunicorn_key = ::File.join(deploy[:deploy_to], 'current', 'server.key')
+      gunicorn_command = "#{base_command} -c #{gunicorn_cfg}"# --certfile #{gunicorn_cert} --keyfile #{gunicorn_key}"
       
       gunicorn_config gunicorn_command do
         owner deploy[:user]
@@ -88,7 +91,7 @@ define :django_configure do
         command gunicorn_command
         directory ::File.join(deploy[:deploy_to], "current")
         autostart true
-        user deploy[:user]
+        #user deploy[:user]
       end
       
       supervisor_service application do

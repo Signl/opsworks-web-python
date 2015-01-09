@@ -25,14 +25,22 @@ node[:deploy].each do |application, deploy|
   node.override[:deploy][application][:migrate] = migrate
   deploy = node[:deploy][application]
 
+  # install mysql requirements
+  system "sudo apt-get -y install python-mysqldb"
+  system "sudo apt-get -y install build-essential python-dev libmysqlclient-dev"
+  system "sudo apt-get -y install default-jdk"
+  system "sudo apt-get -y install redis-server"
+  system "sudo apt-get -y install gunicorn"
+  system "sudo apt-get -y install libevent-dev"
+
   # install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
   if requirements
-    Chef::Log.info("Installing using requirements file: #{requirements}")
+    Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
     pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
-    execute "sudo #{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
+    execute "#{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user deploy[:user]
+      user 'root'
       group deploy[:group]
       environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
     end
@@ -51,7 +59,7 @@ node[:deploy].each do |application, deploy|
       migration_command = "#{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
     execute migration_command do
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user deploy[:user]
+      user 'root'
       group deploy[:group]
     end
   end
@@ -61,7 +69,7 @@ node[:deploy].each do |application, deploy|
     cmd = deploy["django_collect_static"].is_a?(String) ? deploy["django_collect_static"] : "collectstatic --noinput"
     execute "#{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
       cwd ::File.join(deploy[:deploy_to], 'current')
-      user deploy[:user]
+      user 'root'
       group deploy[:group]
     end
   end
