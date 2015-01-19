@@ -25,7 +25,7 @@ node[:deploy].each do |application, deploy|
   node.override[:deploy][application][:migrate] = migrate
   deploy = node[:deploy][application]
 
-  # install mysql requirements
+  # Install mysql requirements
   system "sudo apt-get -y install python-mysqldb"
   system "sudo apt-get -y install build-essential python-dev libmysqlclient-dev"
   system "sudo apt-get -y install default-jdk"
@@ -33,7 +33,7 @@ node[:deploy].each do |application, deploy|
   system "sudo apt-get -y install gunicorn"
   system "sudo apt-get -y install libevent-dev"
 
-  # install requirements
+  # Install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
   if requirements
     Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
@@ -47,6 +47,9 @@ node[:deploy].each do |application, deploy|
   else
     Chef::Log.debug("No requirements file found")
   end
+  
+  # Manually config celery file
+  system "sudo cp #{::File.join(deploy[:deploy_to], 'current', 'django-celery.conf')} /etc/supervisor.d/django-celery.conf"
 
   django_configure do
     deploy_data deploy
