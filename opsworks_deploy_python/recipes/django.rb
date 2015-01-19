@@ -55,6 +55,14 @@ node[:deploy].each do |application, deploy|
     group deploy[:group]
     environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
   end
+  
+  # Reload supervisorctl
+  execute "supervisorctl reload" do
+    cwd ::File.join(deploy[:deploy_to], 'current')
+    user 'root'
+    group deploy[:group]
+    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  end
 
   django_configure do
     deploy_data deploy
