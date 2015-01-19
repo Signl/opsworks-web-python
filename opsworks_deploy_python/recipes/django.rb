@@ -49,7 +49,12 @@ node[:deploy].each do |application, deploy|
   end
   
   # Manually config celery file
-  system "sudo cp #{::File.join(deploy[:deploy_to], 'current', 'django-celery.conf')} /etc/supervisor.d/django-celery.conf"
+  execute "cp #{::File.join(deploy[:deploy_to], 'current', 'django-celery.conf')} /etc/supervisor.d/django-celery.conf" do
+    cwd ::File.join(deploy[:deploy_to], 'current')
+    user 'root'
+    group deploy[:group]
+    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  end
 
   django_configure do
     deploy_data deploy
