@@ -63,7 +63,7 @@ node[:deploy].each do |application, deploy|
   end
   
   # Manually config gunicorn file
-  execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'gunicorn_config.py')} #{::File.join(deploy[:deploy_to], 'shared', '.')}" do
+  execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'gunicorn-config.py')} #{::File.join(deploy[:deploy_to], 'shared', '.')}" do
     cwd ::File.join(deploy[:deploy_to], 'current')
     user 'root'
     group deploy[:group]
