@@ -47,6 +47,12 @@ node[:deploy].each do |application, deploy|
   else
     Chef::Log.debug("No requirements file found")
   end
+
+  django_configure do
+    deploy_data deploy
+    app_name application
+    run_action [] # Don't run actions here
+  end
   
   # Manually config celery file
   execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'django-celery.conf')} /etc/supervisor.d/." do
@@ -70,12 +76,6 @@ node[:deploy].each do |application, deploy|
     user 'root'
     group deploy[:group]
     environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-  end
-
-  django_configure do
-    deploy_data deploy
-    app_name application
-    run_action [] # Don't run actions here
   end
   
   # Migration
