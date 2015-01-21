@@ -56,6 +56,14 @@ node[:deploy].each do |application, deploy|
     environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
   end
   
+  # Manually config gunicorn file
+  execute "cp #{::File.join(deploy[:deploy_to], 'current', 'gunicorn_config.py')} #{::File.join(deploy[:deploy_to], 'shared', 'gunicorn_config.py')}" do
+    cwd ::File.join(deploy[:deploy_to], 'current')
+    user 'root'
+    group deploy[:group]
+    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  end
+  
   # Reload supervisorctl
   execute "supervisorctl reload" do
     cwd ::File.join(deploy[:deploy_to], 'current')
