@@ -63,20 +63,20 @@ node[:deploy].each do |application, deploy|
   end
   
   # Manually config gunicorn file
-  execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'gunicorn-config.py')} #{::File.join(deploy[:deploy_to], 'shared', '.')}" do
-    cwd ::File.join(deploy[:deploy_to], 'current')
-    user 'root'
-    group deploy[:group]
-    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-  end
+  #execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'gunicorn-config.py')} #{::File.join(deploy[:deploy_to], 'shared', '.')}" do
+  #  cwd ::File.join(deploy[:deploy_to], 'current')
+  #  user 'root'
+  #  group deploy[:group]
+  #  environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  #end
   
   # Reload supervisorctl
-  execute "supervisorctl reload" do
-    cwd ::File.join(deploy[:deploy_to], 'current')
-    user 'root'
-    group deploy[:group]
-    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-  end
+  #execute "supervisorctl reload" do
+  #  cwd ::File.join(deploy[:deploy_to], 'current')
+  #  user 'root'
+  #  group deploy[:group]
+  #  environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  #end
   
   # Migration
   if deploy["migrate"] && deploy["migration_command"]

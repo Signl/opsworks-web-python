@@ -86,6 +86,13 @@ define :django_configure do
         action :create
       end
       
+      execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'gunicorn-config.py')} #{::File.join(deploy[:deploy_to], 'shared', '.')}" do
+        cwd ::File.join(deploy[:deploy_to], 'current')
+        user 'root'
+        group deploy[:group]
+        environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+      end
+      
       supervisor_service application do
         action :enable
         environment gunicorn["environment"] || {}
