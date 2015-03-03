@@ -111,18 +111,18 @@ define :django_configure do
         #user deploy[:user]
       end
       
-      supervisor_service application do
-        action :nothing
-        only_if "sleep 60"
-        subscribes :restart,  "gunicorn_config[#{gunicorn_command}]", :delayed
-        subscribes :restart,  "template[#{django_cfg}]", :delayed
-      end
-      
       execute "supervisorctl reload" do
         cwd ::File.join(deploy[:deploy_to], 'current')
         user 'root'
         group deploy[:group]
         environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+      end
+      
+      supervisor_service application do
+        action :nothing
+        only_if "sleep 60"
+        subscribes :restart,  "gunicorn_config[#{gunicorn_command}]", :delayed
+        subscribes :restart,  "template[#{django_cfg}]", :delayed
       end
     end
     
@@ -142,10 +142,10 @@ define :django_configure do
         app_name application
       end
     end
-    if run_action
-      supervisor_service application do
-        action run_action
-      end
-    end
+    #if run_action
+    #  supervisor_service application do
+    #    action run_action
+    #  end
+    #end
   end
 end
