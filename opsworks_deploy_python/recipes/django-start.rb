@@ -10,4 +10,11 @@ node[:deploy].each do |application, deploy|
     end
   end
 
+  execute "supervisorctl reload" do
+    cwd ::File.join(deploy[:deploy_to], 'current')
+    user 'root'
+    group deploy[:group]
+    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  end
+
 end
