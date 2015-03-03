@@ -117,13 +117,6 @@ define :django_configure do
         subscribes :restart,  "gunicorn_config[#{gunicorn_command}]", :delayed
         subscribes :restart,  "template[#{django_cfg}]", :delayed
       end
-      
-      execute "supervisorctl reload" do
-        cwd ::File.join(deploy[:deploy_to], 'current')
-        user 'root'
-        group deploy[:group]
-        environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-      end
     end
     
     celery = Hash.new
@@ -142,10 +135,18 @@ define :django_configure do
         app_name application
       end
     end
-    if run_action
-      supervisor_service application do
-        action run_action
-      end
+    
+    #if run_action
+    #  supervisor_service application do
+    #    action run_action
+    #  end
+    #end
+    
+    execute "supervisorctl reload" do
+      cwd ::File.join(deploy[:deploy_to], 'current')
+      user 'root'
+      group deploy[:group]
+      environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
     end
   end
 end
