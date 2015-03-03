@@ -55,12 +55,12 @@ node[:deploy].each do |application, deploy|
   end
   
   # Manually config celery file
-  #execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'django-celery.conf')} /etc/supervisor.d/." do
-  #  cwd ::File.join(deploy[:deploy_to], 'current')
-  #  user 'root'
-  #  group deploy[:group]
-  #  environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-  #end
+  execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'django-celery.conf')} /etc/supervisor.d/." do
+    cwd ::File.join(deploy[:deploy_to], 'current')
+    user 'root'
+    group deploy[:group]
+    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  end
   
   # Manually config gunicorn file
   #execute "cp -f #{::File.join(deploy[:deploy_to], 'current', 'gunicorn-config.py')} #{::File.join(deploy[:deploy_to], 'shared', '.')}" do
