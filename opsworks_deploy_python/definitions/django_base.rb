@@ -126,10 +126,10 @@ define :django_configure do
         app_name application
       end
     end
-    if run_action
-      supervisor_service application do
-        action run_action
-      end
-    end
+    #if run_action
+    #  supervisor_service application do
+    #    action run_action
+    #  end
+    #end
   end
 end
