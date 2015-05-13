@@ -32,8 +32,19 @@ node[:deploy].each do |application, deploy|
   system "sudo apt-get -y install redis-server"
   system "sudo apt-get -y install gunicorn"
   system "sudo apt-get -y install libevent-dev"
-  system "sudo apt-get -y install libffi-dev"
-  system "sudo apt-get -y install libssl-dev"
+  
+  execute "apt-get -y install libffi-dev" do
+    cwd ::File.join(deploy[:deploy_to], 'current')
+    user 'root'
+    group deploy[:group]
+    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  end
+  execute "apt-get -y install libssl-dev" do
+    cwd ::File.join(deploy[:deploy_to], 'current')
+    user 'root'
+    group deploy[:group]
+    environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+  end
   
   # Install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
