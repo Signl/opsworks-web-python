@@ -32,13 +32,20 @@ node[:deploy].each do |application, deploy|
   system "sudo apt-get -y install redis-server"
   system "sudo apt-get -y install gunicorn"
   system "sudo apt-get -y install libevent-dev"
-
+  
   # Install requirements
   requirements = Helpers.django_setting(deploy, 'requirements', node)
   if requirements
     Chef::Log.info("Installing using requirements file: #{requirements} with sudo")
     pip_cmd = ::File.join(deploy["venv"], 'bin', 'pip')
     execute "#{pip_cmd} install --source=#{Dir.tmpdir} -r #{::File.join(deploy[:deploy_to], 'current', requirements)}" do
+      cwd ::File.join(deploy[:deploy_to], 'current')
+      user 'root'
+      group deploy[:group]
+      environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
+    end
+    
+    execute "#{pip_cmd} install -e git://github.com/drewtempelmeyer/django-azurite.git#egg=django-azurite" do
       cwd ::File.join(deploy[:deploy_to], 'current')
       user 'root'
       group deploy[:group]
