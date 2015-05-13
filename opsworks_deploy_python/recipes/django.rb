@@ -44,13 +44,6 @@ node[:deploy].each do |application, deploy|
       group deploy[:group]
       environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
     end
-    
-    execute "#{pip_cmd} install -e git://github.com/drewtempelmeyer/django-azurite.git#egg=django-azurite" do
-      cwd ::File.join(deploy[:deploy_to], 'current')
-      user 'root'
-      group deploy[:group]
-      environment 'HOME' => ::File.join(deploy[:deploy_to], 'shared')
-    end
   else
     Chef::Log.debug("No requirements file found")
   end
